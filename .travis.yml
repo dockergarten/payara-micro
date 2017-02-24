@@ -1,0 +1,25 @@
+language: java
+
+sudo: false
+
+services:
+  - docker
+
+after_success:
+  - docker login -u $DOCKER_USER -p $DOCKER_PASS
+  - docker tag $REPO:$TAG $REPO:$COMMIT
+  - docker tag $REPO:$TAG $REPO:$TRAVIS_BUILD_NUMBER
+  - docker push $REPO
+  - docker logout
+
+env:
+  global:
+  - COMMIT=${TRAVIS_COMMIT::8}
+  - REPO=dockergarten/payara-micro
+  - secure: oFV28R9/xI7D2V6O+QL49O2AVpEtpty6V0CceucXKs264HmwsJUpxL5almMxKQi+xdhP4IFRvPqW0cv1DeqDglAMumkNCedCfVut2n54hftGs13CDhTCKxNGjJiMu5Vvp2dbibAuPtycu9TRB0QAMItC3Xc9lNRe+W7j/CSoCRQQ+RMUqPdA0GORZ39fS6EySegwkKtg1KQjgS7lL5G6XeLoWuhuSbQZ1OJnNCoImjo6LE9vmOqv/UGZGyUK71Gurw9GprEl1GNEqXlv6uPY1qi9qGpz+qjMhIuftWhmzAIFXAAGJRI1Yv3W+TQFi6bH0Zr4QFrqq5lqX/mOofxwzYAApRZx6u4knN6IeJTaRyjU70R1GuFXhtlQsQ7iQcweWJpa3K1At22vi8DOdylhFwkcDHjofUIaoP1LY5CI9tD+/fEdUBdDgF6pUk72L31fRx2qbvWJEzN+cFbActZJ8T/xrobx7ylVK0M9WttK42ByA8uDYYTnTb3A6/8015t0vNKzGJ6Cdd993B8YpJJ0qu7zVoA5EH45OiXrUYhCPRnGsAmhPcYha57RXfIxuVGnzZaQSWWvrnEng1UA8XDue5ZTBLwWwZuBnr5CElcmKeOhXHibDHVrk/mQoE4MM5VHNMJjrELqj3GiAT7SAcee1mNDyuJLvCyXOJO91a2OSvw=
+  - secure: py2W5Zdke0wLFipDkc5CZ2Xj/jjwVt6EnpJM2OwxuzvWKqPCiRkCASHdqIrX9JdKqYUgiUPt/41ybUbZqRVIm/UBz1bu1FjdmTp/hwJ6b9KqKh1VZbaTNsJPSnJqLX8V+dV2BbuJZawyWoTkEHCvBd35Q+LetAu30N49GKdPht8HynVzjo/iilaP3GfHnwRjUJHbVe/ZyirO9wnmlPS+9ox3SMvfQuJtwCg+1qUQGM+loHv1/7O/QAcRvIISTdnRfDpqohb6yYP0RKaoFH4X2gxXC70aNuv6Y7qbOWIhrxvQR/JEtiFwouT10rmjnByOkgqjdGzW4disYdiCUjPnlH5Rjp1oGVeUI2lCjd/8LPWkA1fnDQiYnFD6HiO3TTRxZykxtYJB4Kf1PjoZ/fNx3OHH6KmhDMEvsod4AQeNlNFQomYtCQGuAXuLxucQSDdoxXJpJnQI7KKhJqA19zjL3ACXwFLYgZWGGaoEosKP/1v2+/Lmw3EOig4vboS+7oe1Wz34kTuZp1jnyhrzeSSU2LX7Xzki7OaOEUxwtDGii9NSIhL54XGW6iBpMnt6m/hRlojQpYdBWo6A6DXF7wXTyFm1KcNUDfOBsIAyzG7dO+x5qEzva0sJjLTBcmdqSHTXZLGGi/T2cAAWwlnxygBXX5eLsWr02G+Sw3CivcRsjcs=
+  - secure: a+TZFmCpapLHU1d+V8ph1L79s74BOxbFzQSR9L6BRYJqKEIQ8w1OkIzTyq7lS/RXg14mhWQLkqb8iXP1Kc+hA0XZQ+RYCnB1tZPIHtaKMpVI8pkhnjFTGCuLmwTz6tO4EKGOrm9+zSi+WtQrFWhsOR/Dgv+7iK+h9bLKppWgV5gF6WuoRl7AMNtGPmpf+D5RdQr5c5zp/blRFWmQV9tcaWpEvsgs8oBa88unEEBntoMsAzBQlg4RRERRG60Zo+LgArAwkhitt3InyvYmCn7aUql4qqQv5/Blr67aG0S5W12vPB4qtN+W7LvoGZnCoEduKEVuotJZOvWgz/bmrqVMs6WtlHhlrru5id+ciTnlCstcnS8m7Hxrgi2bE1fMNwB7WhHvpwOi+Qtic2rc5GjveC1PH7vczRVKjhIjHEfRLoC8a+L8831B49Ze0A7yBitKrGcuHxLiMV4q4x4yO3eJDzi1kgFaCbfIBcreF8qmbh0VgdkTuZVDwolibxhf0fxBY9/A7WB3VzSAl6FYUE3o/Nog/JRuZflGk79KoPv3wrmqM7llZX0M1S4c8RquaE27a4H4wlzg1hntUeH7v8t/Sc0VfNoCLQXrtCRENHI4YzsUJm/C62FfUoDASfDiGAi3w1slPRzD0VW5aOpPJlRF3by/2iQB+f3po1YL1U9sAfA=
+
+script:
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+  - docker build -t $REPO:$TAG .
