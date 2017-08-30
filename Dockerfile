@@ -1,4 +1,4 @@
-FROM payara/micro
+FROM payara/micro:5.182
 LABEL maintainer MAINTAINER "Marcus Fihlon, fihlon.ch"
 
 USER root
